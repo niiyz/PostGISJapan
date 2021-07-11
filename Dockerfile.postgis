@@ -1,0 +1,22 @@
+FROM postgres:12 AS make_data
+
+RUN apt-get update
+RUN apt-get install -y postgis zip tree
+RUN apt-get clean
+RUN rm -rf /var/cache/apt/lists
+
+COPY data ./data
+
+RUN unzip -j -d data/temp data/input/N03-20200101_GML.zip "*.dbf" "*.shp" "*.shx" "*.xml"; exit 0
+RUN shp2pgsql -s 4612 -D -i -I -W cp932 ./data/temp/N03-20_200101.shp japan > ./data/output/japan.sql
+RUN tree -sh data
+
+FROM postgis/postgis AS db
+
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+USER postgres
+
+COPY --from=make_data /data/output/japan.sql /docker-entrypoint-initdb.d
+
+RUN ls /docker-entrypoint-initdb.d
