@@ -1,5 +1,5 @@
 
 ```shell
-docker-compose up --build
-docker-compose exec postgis psql -U postgis
+make up
+make psql
 ```
