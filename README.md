@@ -13,14 +13,19 @@ postgis=#
 
 ### Example SQL
 ```sql
--- 富山県を集める 外枠有り 、内枠有り 、塗りつぶし有り　return MULTIPOLYGON
+-- ST_Collect　富山県を集める 外枠有り 、内枠有り 、塗りつぶし有り　return MULTIPOLYGON
 select ST_Collect(geom) from japan where pref = '富山県'
 
--- 富山県を集める 外枠有り 、内枠有り 、塗りつぶし無し return MULTILINESTRING
+-- ST_ExteriorRingしてST_Collect　富山県を集める 外枠有り 、内枠有り 、塗りつぶし無し return MULTILINESTRING
 select ST_Collect(ST_ExteriorRing(geom)) from japan where pref = '富山県'
 
--- リングを集めてST_LineMergeしても同じ
+-- ST_ExteriorRingしてST_CollectsしたものをリングをST_LineMergeしても変化なし　集めてST_LineMergeしても同じ
 select ST_LineMerge(ST_Collect(ST_ExteriorRing(geom))) from japan where pref = '富山県'
+
+-- ST_Union 離れた島があって一つにまとまらないのでマルチポリゴンを返す
+select ST_Union(geom) from japan where pref = '富山県'
+-- ST_Union 離れた島を除外するので一つにまとまりシングルポリゴンを返す 
+select ST_Union(geom) from japan where pref = '富山県' and ST_Area(geom) > 0.0000014
 
 -- 富山県の面積一覧
 select ST_Area(geom) as area, geom from japan where pref = '富山県' order by area desc
