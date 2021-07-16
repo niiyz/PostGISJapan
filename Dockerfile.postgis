@@ -7,16 +7,13 @@ RUN rm -rf /var/cache/apt/lists
 
 COPY data ./data
 
+RUN mkdir -p ./data/output
 RUN unzip -j -d data/temp data/input/N03-20200101_GML.zip "*.dbf" "*.shp" "*.shx" "*.xml"; exit 0
 RUN shp2pgsql -s 4612 -D -i -I -S -m data/input/rename.txt -W cp932 ./data/temp/N03-20_200101.shp japan > ./data/output/japan.sql
-Run echo "CREATE INDEX japan_pref_idx     ON japan (pref);"     >> ./data/output/japan.sql
-Run echo "CREATE INDEX japan_regional_idx ON japan (regional);" >> ./data/output/japan.sql
-Run echo "CREATE INDEX japan_city1_idx    ON japan (city1);"    >> ./data/output/japan.sql
-Run echo "CREATE INDEX japan_city2_idx    ON japan (city2);"    >> ./data/output/japan.sql
-Run echo "CREATE INDEX japan_code_idx     ON japan (code);"     >> ./data/output/japan.sql
 RUN tree -sh data
 
 FROM postgis/postgis AS db
 
 COPY --from=make_data /data/output/japan.sql /docker-entrypoint-initdb.d
+COPY --from=make_data /data/input/test.sql /docker-entrypoint-initdb.d
 
