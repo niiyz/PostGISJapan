@@ -4,9 +4,9 @@ PSQL_COMMAND := $(PSQL) -c
 psql:
 	$(PSQL)
 cleanup:
-	docker system prune --volumes -f && docker-compose build --no-cache && docker-compose up
+	docker volume rm postgisjapan_db-data -f && docker-compose build --no-cache && docker-compose up
 up:
-	docker system prune --volumes -f && docker-compose up --build
+	docker-compose down && docker volume rm postgisjapan_db-data -f && docker-compose up --build
 japan:
 	$(PSQL_COMMAND) "\d japan"
 count:

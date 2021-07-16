@@ -1,4 +1,4 @@
--- Add index to japan
+select 'Add Index to japan'::text;
 CREATE
 INDEX japan_pref_idx     ON japan (pref);
 CREATE
@@ -10,7 +10,7 @@ INDEX japan_city2_idx    ON japan (city2);
 CREATE
 INDEX japan_code_idx     ON japan (code);
 
---
+select 'Create prefectures'::text;
 DROP TABLE IF EXISTS public.prefectures;
 CREATE TABLE public.prefectures
 (
@@ -32,7 +32,7 @@ begin
         group by pref
         order by code
     loop
-        raise info 'prefecture % %', p.name, p.code;
+        raise info 'prefecture % %', p.code, p.name;
         insert into prefectures
         (
          code,
@@ -56,5 +56,8 @@ begin
     end loop;
 end$$;
 
-
+select 'Drop japan'::text;
 DROP TABLE IF EXISTS public.japan;
+
+select 'prefectures'::text;
+select code, name, count(*) from public.prefectures group by code, name order by code;
