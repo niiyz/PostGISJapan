@@ -1,10 +1,16 @@
-console.log(3)
+console.log('puppeteer')
 
 const pptr = require('puppeteer');
 
 async function run() {
-    const browser = await pptr.launch({});
-
+    const browser = await pptr.launch({
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
+        ]
+    })
     // create page
     const page = await browser.newPage();
 
@@ -14,10 +20,9 @@ async function run() {
     // select url
     await page.goto('https://www.google.co.jp/');
 
-    console.log('https://www.google.co.jp/ is…');
-    console.log('-----get title dynamic!-----');
     console.log(await page.title());
-    console.log('----------');
+
+    await page.screenshot({path: "/app/test.png", fullPage: true});
 
     // close browser
     await browser.close()
