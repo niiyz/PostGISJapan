@@ -56,8 +56,9 @@ begin
     end loop;
 end$$;
 
-select 'Drop japan'::text;
-DROP TABLE IF EXISTS public.japan;
+--select 'Drop japan'::text;
+--DROP TABLE IF EXISTS public.japan;
 
 select 'prefectures'::text;
 select code, name, count(*) from public.prefectures group by code, name order by code;
+

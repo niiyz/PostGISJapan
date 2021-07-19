@@ -1,3 +1,4 @@
+// @ts-ignore
 import puppeteer from "puppeteer";
 
 const main = async (): Promise<void> => {
